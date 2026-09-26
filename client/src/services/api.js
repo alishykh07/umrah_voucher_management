@@ -1,10 +1,16 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+const removeLegacyLocalImageUrls = (value) => {
+  if (typeof value === 'string') return /^http:\/\/localhost(?::\d+)?\/uploads\//i.test(value) ? '' : value;
+  if (Array.isArray(value)) return value.map(removeLegacyLocalImageUrls);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, removeLegacyLocalImageUrls(item)]));
+  return value;
+};
 const request = async (path, options = {}) => {
   const response = await fetch(`${API_URL}${path}`, { credentials: 'include', headers: { 'Content-Type': 'application/json', ...options.headers }, ...options });
   const payload = response.status === 204 ? null : await response.json();
   if (!response.ok) throw new Error(payload?.message || 'Request failed.');
-  return payload;
+  return removeLegacyLocalImageUrls(payload);
 };
 
 export const getHealth = async () => {
@@ -57,7 +63,7 @@ export const uploadImage = async (file, folder = 'misc') => {
   const response = await fetch(`${API_URL}/uploads/image`, { method: 'POST', credentials: 'include', body: formData });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(payload?.message || 'Image upload failed.');
-  return payload;
+  return removeLegacyLocalImageUrls(payload);
 };
 export const getAgents = () => request('/agents');
 export const createAgent = (agent) => request('/agents', { method: 'POST', body: JSON.stringify(agent) });
