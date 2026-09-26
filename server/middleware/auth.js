@@ -1,4 +1,24 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-export const requireAuth = async (req, res, next) => { try { const bearer = req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : null; const token = req.cookies?.token || bearer; if (!token) return res.status(401).json({ message: 'Authentication is required.' }); const payload = jwt.verify(token, process.env.JWT_SECRET); const user = await User.findById(payload.sub); if (!user || user.status !== 'active') return res.status(401).json({ message: 'Your session is no longer valid.' }); req.user = user; next(); } catch { res.status(401).json({ message: 'Invalid or expired authentication token.' }); } };
-export const allowRoles = (...roles) => (req, res, next) => roles.includes(req.user.role) ? next() : res.status(403).json({ message: 'You are not authorized for this action.' });
+
+export const requireAuth = async (req, res, next) => {
+  try {
+    const bearer = req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : null;
+    const token = req.cookies?.token || bearer;
+    if (!token) return res.status(401).json({ message: 'Authentication is required.' });
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(payload.sub);
+    if (!user || user.status !== 'active') return res.status(401).json({ message: 'Your session is no longer valid.' });
+
+    req.user = user;
+    next();
+  } catch {
+    res.status(401).json({ message: 'Invalid or expired authentication token.' });
+  }
+};
+
+export const allowRoles = (...roles) => (req, res, next) => {
+  const permitted = roles.includes(req.user.role) || (req.user.role === 'super_admin' && roles.includes('admin'));
+  return permitted ? next() : res.status(403).json({ message: 'You are not authorized for this action.' });
+};
