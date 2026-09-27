@@ -132,3 +132,10 @@
   .public-voucher-stage.fit-view .voucher-document{width:794px!important;max-width:none!important}
 }
 @media print{.fit-toggle{display:none!important}.public-voucher-stage.fit-view{height:auto!important;overflow:visible!important}.public-voucher-stage.fit-view .public-voucher-canvas{width:100%!important;transform:none!important}.public-voucher-stage.fit-view .voucher-document{width:auto!important;max-width:100%!important}}
+
+/* Voucher Preview: keep controls above and render the printable voucher in one full-width row. */
+.voucher-preview-page .voucher-preview-layout{display:flex!important;flex-direction:column!important;gap:18px!important}
+.voucher-preview-page .voucher-preview-left{width:100%!important}
+.voucher-preview-page .voucher-a4-wrap{position:static!important;width:min(100%,1080px)!important;max-width:100%!important;max-height:none!important;margin:0 auto!important;overflow:visible!important;padding:5px!important}
+.voucher-preview-page .voucher-a4-wrap .voucher-document{width:100%!important;max-width:100%!important;min-width:0!important}
+@media(max-width:700px){.voucher-preview-page .voucher-a4-wrap{width:100%!important;padding:0!important}.voucher-preview-page .voucher-a4-wrap .voucher-document{min-width:0!important}}
