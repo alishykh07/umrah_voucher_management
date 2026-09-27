@@ -156,3 +156,6 @@
   .public-voucher-stage,.public-voucher-canvas{width:900px!important;height:auto!important;overflow:visible!important;transform:none!important}
   .public-voucher-page .voucher-document{width:900px!important;max-width:none!important;margin:0!important}
 }
+
+/* Voucher PDF uses the same canvas ratio as the approved public voucher. */
+@page{size:240mm 315mm;margin:0}
