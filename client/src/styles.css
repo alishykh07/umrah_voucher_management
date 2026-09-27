@@ -149,3 +149,10 @@
   .public-voucher-canvas{width:100%!important;transform:none!important}
   .public-voucher-page .voucher-document{width:100%!important;max-width:none!important}
 }
+
+/* Preserve the exact desktop voucher canvas when Chromium prints the public voucher. */
+@media print{
+  .public-voucher-page{width:900px!important;min-height:1181px!important;padding:0!important}
+  .public-voucher-stage,.public-voucher-canvas{width:900px!important;height:auto!important;overflow:visible!important;transform:none!important}
+  .public-voucher-page .voucher-document{width:900px!important;max-width:none!important;margin:0!important}
+}
