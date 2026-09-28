@@ -187,3 +187,5 @@
   .public-voucher-stage.fit-view .document-management-contacts section:last-child{border-right:0!important}
   .public-voucher-stage.fit-view .document-qr{align-self:flex-end!important;margin-left:18px!important}
 }
+/* Shared pagination: a single consistent page selector across all lists. */
+.shared-pagination{display:flex;align-items:center;gap:5px}.shared-pagination button{display:grid;place-items:center;min-width:30px;height:30px;border:1px solid #d7e6f6;border-radius:7px;padding:0 8px;background:#fff;color:#42658e;font:700 11px Inter,sans-serif;cursor:pointer}.shared-pagination button:hover:not(:disabled){border-color:#0871f3;background:#edf5ff;color:#0871f3}.shared-pagination button.active{border-color:#0871f3;background:#0871f3;color:#fff;box-shadow:0 4px 10px #0871f336}.shared-pagination button:disabled{opacity:.42;cursor:not-allowed}.shared-pagination .pagination-arrow{width:30px;padding:0}
