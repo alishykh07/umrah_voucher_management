@@ -4,7 +4,7 @@ export const renderVoucherPdf = async (publicUrl) => {
   const browser = await launchPdfBrowser();
   try {
     const page = await browser.newPage();
-    await page.setViewport({ width: 1440, height: 2000, deviceScaleFactor: 1 });
+    await page.setViewport({ width: 1440, height: 2000, deviceScaleFactor: 2 });
     await page.goto(publicUrl, { waitUntil: 'networkidle2', timeout: 30000 });
     await page.waitForSelector('.public-document', { timeout: 15000 });
 
