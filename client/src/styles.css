@@ -189,3 +189,18 @@
 }
 /* Shared pagination: a single consistent page selector across all lists. */
 .shared-pagination{display:flex;align-items:center;gap:5px}.shared-pagination button{display:grid;place-items:center;min-width:30px;height:30px;border:1px solid #d7e6f6;border-radius:7px;padding:0 8px;background:#fff;color:#42658e;font:700 11px Inter,sans-serif;cursor:pointer}.shared-pagination button:hover:not(:disabled){border-color:#0871f3;background:#edf5ff;color:#0871f3}.shared-pagination button.active{border-color:#0871f3;background:#0871f3;color:#fff;box-shadow:0 4px 10px #0871f336}.shared-pagination button:disabled{opacity:.42;cursor:not-allowed}.shared-pagination .pagination-arrow{width:30px;padding:0}
+/* QR scan fit view: portrait composition that shows the entire voucher without page scrolling. */
+@media(max-width:700px){
+  .public-voucher-stage.fit-view{display:flex!important;justify-content:center!important;align-items:flex-start!important}
+  .public-voucher-stage.fit-view .public-voucher-canvas{transform-origin:top center!important}
+  .public-voucher-stage.fit-view .document-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .public-voucher-stage.fit-view .document-facts>div:nth-child(2n){border-right:0!important}
+  .public-voucher-stage.fit-view .document-facts>div:nth-child(n+3){border-top:1px solid #cfb06c!important}
+  .public-voucher-stage.fit-view .document-customer>div{grid-template-columns:1fr!important}
+  .public-voucher-stage.fit-view .document-customer span{border-right:0!important;border-bottom:1px solid #cfb06c!important}
+  .public-voucher-stage.fit-view .document-customer span:last-child{border-bottom:0!important}
+  .public-voucher-stage.fit-view .document-group{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .public-voucher-stage.fit-view .document-group>div:nth-child(2n){border-right:0!important}
+  .public-voucher-stage.fit-view .document-two-columns{grid-template-columns:1fr!important}
+  .public-voucher-stage.fit-view .document-two-columns>.document-table-section,.public-voucher-stage.fit-view .document-two-columns>.document-terms{min-width:0!important}
+}
