@@ -212,3 +212,5 @@
 .voucher-document .document-table-section td,.voucher-document .document-group>div,.voucher-document .document-customer span{border-color:#dce3e9!important}
 .voucher-document .document-bottom{background:#36566f!important;color:#fff!important}
 .voucher-document .document-bottom span{color:#d7b45e!important}
+/* Clean voucher facts: labels and values only, without decorative icons. */
+.voucher-document .document-facts-clean>div{display:flex!important;align-items:center!important;padding:13px 16px!important}.voucher-document .document-facts-clean>div>span{display:block!important}.voucher-document .document-facts-clean small{font-size:8px!important}.voucher-document .document-facts-clean b{margin-top:5px!important;font-size:11px!important}
