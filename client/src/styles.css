@@ -204,3 +204,11 @@
   .public-voucher-stage.fit-view .document-two-columns{grid-template-columns:1fr!important}
   .public-voucher-stage.fit-view .document-two-columns>.document-table-section,.public-voucher-stage.fit-view .document-two-columns>.document-terms{min-width:0!important}
 }
+/* Voucher document: restrained, print-friendly colours used in preview, PDF and QR scan. */
+.voucher-document .document-header{border-bottom-color:#c7d2dc!important;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(249,250,251,.9))!important}
+.voucher-document .document-customer h3,.voucher-document .document-table-section h3,.voucher-document .document-terms h3{background:#eef2f5!important;color:#244a68!important}
+.voucher-document .document-customer>div,.voucher-document .document-group,.voucher-document .document-table-section,.voucher-document .document-terms{border-color:#d5dde5!important}
+.voucher-document .document-table-section th{background:#f4f6f8!important;color:#3e5d76!important}
+.voucher-document .document-table-section td,.voucher-document .document-group>div,.voucher-document .document-customer span{border-color:#dce3e9!important}
+.voucher-document .document-bottom{background:#36566f!important;color:#fff!important}
+.voucher-document .document-bottom span{color:#d7b45e!important}
