@@ -3,6 +3,7 @@ import QRCode from 'qrcode';
 import Counter from '../models/Counter.js';
 import Voucher from '../models/Voucher.js';
 import Customer from '../models/Customer.js';
+import User from '../models/User.js';
 import { renderVoucherPdf } from '../services/pdfService.js';
 
 const VOUCHER_PREFIX = 'UV-';
@@ -28,6 +29,16 @@ const syncVoucherCustomer = async (customer) => {
 };
 
 const numberFromVoucher = (voucherNo) => Number(String(voucherNo || '').replace(/^UV-/, '')) || 0;
+const validateReferralAgent = async ({ company, referredByAgent }) => {
+  if (!referredByAgent) return undefined;
+  const agent = await User.findOne({ _id: referredByAgent, role: 'staff', status: 'active' }).select('company');
+  if (!agent || String(agent.company || '') !== String(company || '')) {
+    const error = new Error('Choose an active agent assigned to the selected company.');
+    error.statusCode = 400;
+    throw error;
+  }
+  return agent._id;
+};
 
 const ensureCounter = async () => {
   const latest = await Voucher.findOne({ voucherNo: /^UV-\d+$/ }).sort({ voucherNo: -1 }).select('voucherNo').lean();
@@ -76,6 +87,7 @@ const payload = (body) => {
   const voucherHeader = body.voucherHeader || {};
   return {
   company: body.company,
+  referredByAgent: body.referredByAgent || undefined,
   bookingNo: body.bookingNo || '',
   manualServiceNo: body.manualServiceNo || '',
   branch: body.branch || '',
@@ -132,15 +144,15 @@ export const listVouchers = async (req, res, next) => {
     const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 10, 1), 100);
     const [total, vouchers] = await Promise.all([
       Voucher.countDocuments(query),
-      Voucher.find(query).populate('company', 'name slug logo').populate('createdBy', 'name role').populate('cancelledBy', 'name role').sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+      Voucher.find(query).populate('company', 'name slug logo').populate('referredByAgent', 'name phone email company').populate('createdBy', 'name role').populate('cancelledBy', 'name role').sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
     ]);
     res.json({ vouchers, pagination: { page, limit, total, totalPages: Math.max(Math.ceil(total / limit), 1) } });
   } catch (e) { next(e); }
 };
-export const getVoucher = async (req, res, next) => { try { const voucher = await Voucher.findById(req.params.id).populate('company', 'name slug logo phone whatsapp email address website status'); if (!voucher) return res.status(404).json({ message: 'Voucher not found.' }); res.json({ voucher }); } catch (e) { next(e); } };
+export const getVoucher = async (req, res, next) => { try { const voucher = await Voucher.findById(req.params.id).populate('company', 'name slug logo phone whatsapp email address website status').populate('referredByAgent', 'name phone email company'); if (!voucher) return res.status(404).json({ message: 'Voucher not found.' }); res.json({ voucher }); } catch (e) { next(e); } };
 export const getNextVoucherNumber = async (req, res, next) => { try { res.json({ voucherNo: await previewNumber() }); } catch (e) { next(e); } };
-export const createVoucher = async (req, res, next) => { try { const data = payload(req.body); const isCancelled = data.status === 'CANCELLED'; const voucher = await Voucher.create({ ...data, voucherNo: await nextNumber(), qrToken: crypto.randomBytes(32).toString('base64url'), createdBy: req.user._id, updatedBy: req.user._id, ...(isCancelled ? { cancelledAt: new Date(), cancelledBy: req.user._id, cancellationReason: 'Cancelled at creation' } : {}) }); await syncVoucherCustomer(data.customer); res.status(201).json({ voucher: await voucher.populate('company', 'name slug') }); } catch (e) { next(e); } };
-export const updateVoucher = async (req, res, next) => { try { const voucher = await Voucher.findById(req.params.id); if (!voucher) return res.status(404).json({ message: 'Voucher not found.' }); if (voucher.status !== 'DRAFT') return res.status(409).json({ message: 'Only draft vouchers can be edited.' }); Object.assign(voucher, payload(req.body), { updatedBy: req.user._id }); await voucher.save(); await syncVoucherCustomer(voucher.customer); await voucher.populate('company', 'name slug'); res.json({ voucher }); } catch (e) { next(e); } };
+export const createVoucher = async (req, res, next) => { try { const data = payload(req.body); data.referredByAgent = await validateReferralAgent(data); const isCancelled = data.status === 'CANCELLED'; const voucher = await Voucher.create({ ...data, voucherNo: await nextNumber(), qrToken: crypto.randomBytes(32).toString('base64url'), createdBy: req.user._id, updatedBy: req.user._id, ...(isCancelled ? { cancelledAt: new Date(), cancelledBy: req.user._id, cancellationReason: 'Cancelled at creation' } : {}) }); await syncVoucherCustomer(data.customer); res.status(201).json({ voucher: await voucher.populate(['company', 'referredByAgent']) }); } catch (e) { next(e); } };
+export const updateVoucher = async (req, res, next) => { try { const voucher = await Voucher.findById(req.params.id); if (!voucher) return res.status(404).json({ message: 'Voucher not found.' }); if (voucher.status !== 'DRAFT') return res.status(409).json({ message: 'Only draft vouchers can be edited.' }); const data = payload(req.body); data.referredByAgent = await validateReferralAgent(data); Object.assign(voucher, data, { updatedBy: req.user._id }); await voucher.save(); await syncVoucherCustomer(voucher.customer); await voucher.populate(['company', 'referredByAgent']); res.json({ voucher }); } catch (e) { next(e); } };
 export const deleteVoucher = async (req, res, next) => { try { const voucher = await Voucher.findById(req.params.id); if (!voucher) return res.status(404).json({ message: 'Voucher not found.' }); if (voucher.status !== 'DRAFT') return res.status(409).json({ message: 'Only draft vouchers can be deleted.' }); await voucher.deleteOne(); res.status(204).end(); } catch (error) { next(error); } };
 export const changeStatus = (status) => async (req, res, next) => {
   try {

@@ -60,6 +60,7 @@ const voucherHeader = new mongoose.Schema({
 
 const voucherSchema = new mongoose.Schema({
   company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
+  referredByAgent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
   voucherNo: { type: String, required: true, unique: true, index: true },
   bookingNo: { type: String, trim: true },
   manualServiceNo: { type: String, trim: true },
