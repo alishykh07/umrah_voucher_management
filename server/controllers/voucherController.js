@@ -29,11 +29,11 @@ const syncVoucherCustomer = async (customer) => {
 };
 
 const numberFromVoucher = (voucherNo) => Number(String(voucherNo || '').replace(/^UV-/, '')) || 0;
-const validateReferralAgent = async ({ company, referredByAgent }) => {
+const validateReferralAgent = async ({ referredByAgent }) => {
   if (!referredByAgent) return undefined;
-  const agent = await User.findOne({ _id: referredByAgent, role: 'staff', status: 'active' }).select('company');
-  if (!agent || String(agent.company || '') !== String(company || '')) {
-    const error = new Error('Choose an active agent assigned to the selected company.');
+  const agent = await User.findOne({ _id: referredByAgent, role: 'staff', status: 'active' }).select('_id');
+  if (!agent) {
+    const error = new Error('Choose an active agent or select Direct customer / No agent.');
     error.statusCode = 400;
     throw error;
   }
