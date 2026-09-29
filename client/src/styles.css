@@ -214,3 +214,10 @@
 .voucher-document .document-bottom span{color:#d7b45e!important}
 /* Clean voucher facts: labels and values only, without decorative icons. */
 .voucher-document .document-facts-clean>div{display:flex!important;align-items:center!important;padding:13px 16px!important}.voucher-document .document-facts-clean>div>span{display:block!important}.voucher-document .document-facts-clean small{font-size:8px!important}.voucher-document .document-facts-clean b{margin-top:5px!important;font-size:11px!important}
+/* QR portrait facts: two equal rows and one full-width final card, with one consistent border system. */
+@media(max-width:700px){
+  .public-voucher-stage.fit-view .document-facts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:hidden!important;border:1px solid #d5dde5!important;border-radius:9px!important}
+  .public-voucher-stage.fit-view .document-facts>div{min-width:0!important;margin:0!important;border:0!important;border-right:1px solid #d5dde5!important;border-bottom:1px solid #d5dde5!important}
+  .public-voucher-stage.fit-view .document-facts>div:nth-child(2n){border-right:0!important}
+  .public-voucher-stage.fit-view .document-facts>div:nth-child(5){grid-column:1/-1!important;border-bottom:0!important}
+}
